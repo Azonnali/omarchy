@@ -54,11 +54,14 @@ scan = mod.LocalScan(today)
 complete = mod.scan_opencode(scan)
 stats = scan.snapshot()
 
-# /activity fold: prompt+reasoning -> input, completion -> output
+# /activity fold: prompt+reasoning -> input, completion -> output.
+# The real endpoint returns "date" as "YYYY-MM-DD HH:MM:SS" (confirmed
+# against a live account), not a bare date -- these rows use that shape
+# so a regression here fails loudly instead of matching a lenient fixture.
 activity = mod.summarize_activity([
-  {"date": today.strftime("%Y-%m-%d"), "model": "openai/gpt-4o-mini",
+  {"date": today.strftime("%Y-%m-%d") + " 00:00:00", "model": "openai/gpt-4o-mini",
    "prompt_tokens": 50, "completion_tokens": 25, "reasoning_tokens": 10},
-  {"date": "2020-01-01", "model": "x/y-model",
+  {"date": "2020-01-01 00:00:00", "model": "x/y-model",
    "prompt_tokens": 7, "completion_tokens": 3, "reasoning_tokens": 0},
   "garbage-row",
 ], today)

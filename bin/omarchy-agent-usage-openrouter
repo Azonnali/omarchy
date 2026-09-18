@@ -197,7 +197,10 @@ def summarize_activity(items: list[Any], today: datetime) -> dict[str, Any]:
     for raw in items:
         if not isinstance(raw, dict):
             continue
-        day = str(raw.get("date") or "")
+        # /activity reports date as "YYYY-MM-DD HH:MM:SS", not a bare date;
+        # slicing to the date portion keeps it comparable to today_date and
+        # recent_dates below (both "YYYY-MM-DD") instead of never matching.
+        day = str(raw.get("date") or "")[:10]
         model = model_name(str(raw.get("model_permaslug") or raw.get("model") or ""))
         prompt = number(raw.get("prompt_tokens"))
         reasoning = number(raw.get("reasoning_tokens"))
